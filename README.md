@@ -64,5 +64,9 @@ reset - Reset all settings to default values.
 "
 
 ![telegram1](https://github.com/eminokkol/telegram-dht-dog/assets/141066897/3e95ed52-b136-44a2-8c46-d1704e6c9a19)
+
 ![telegram2](https://github.com/eminokkol/telegram-dht-dog/assets/141066897/b200ec09-afb3-4066-acd7-3458763493d5)
+
+Optional Menu:
+
 ![telegram3](https://github.com/eminokkol/telegram-dht-dog/assets/141066897/48cd8e84-5b6a-403d-b2b4-e00402b8d693)
