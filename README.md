@@ -58,10 +58,10 @@ warn_humi_h - Enter high humidity warning value (%)
 warn_humi_l - Enter low humidity warning value (%)  
 alarm_on - Switch on Notifications  
 alarm_off - Switch off Notifications  
-state - Notification status  
+state - Notification status
 intervalt - Enter notification interval (minute) 
 calibr_temp - Enter temp calibration value  
-calibr_humi - Enter humidity calibration value	
+calibr_humi - Enter humidity calibration value
 reset - Reset all settings to default values. 
 "
 
