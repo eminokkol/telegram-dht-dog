@@ -45,11 +45,13 @@ Other values : 0
 OPTIONAL:
 For bot menu, you can go to BotFather->enter this command:  "/mybots" -> select bot-> edit bot -> edit commands 
 and enter below without quotes:
+
+
 "
 start - Start bot
-temperature - Current temp and humidity.   
-timenow - Current date and time of device   
-current_settings - Show calibration, low and high temp and humidity settings  
+temperature - Current temp and humidity. 
+timenow - Current date and time of device  
+current_settings - Show calibration, low and high temp and humidity settings 
 warn_temp_h - Enter high temp warning temperature
 warn_temp_l - Enter low temp warning temperature
 warn_humi_h - Enter high humidity warning value (%)  
@@ -59,9 +61,10 @@ alarm_off - Switch off Notifications
 state - Notification status  
 intervalt - Enter notification interval (minute) 
 calibr_temp - Enter temp calibration value  
-calibr_humi - Enter humidity calibration value 
+calibr_humi - Enter humidity calibration value	
 reset - Reset all settings to default values. 
 "
+
 
 ![telegram1](https://github.com/eminokkol/telegram-dht-dog/assets/141066897/3e95ed52-b136-44a2-8c46-d1704e6c9a19)
 
