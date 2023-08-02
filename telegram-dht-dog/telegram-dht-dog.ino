@@ -14,6 +14,7 @@ If you want more than one user, you can find your group id and use it too.
 CODE CONFIGURATION:
 Enter your BOT-TOKEN, CHAT ID and wifi credentials. Define your local time in "configure_time" area.
 Define "DEGREE" C for Celcius, F for Fahrenheit. Default is Celcius
+Define day_show 1 to show day counter, 0 to hide. Make sure to reset device via /reset command in order to make counter work properly. Reset makes the da count to "0".
 
 NOTE: After resetting from your bot using /reset command; default values will be like this:
 High temp : 39
@@ -55,9 +56,10 @@ reset - Reset all settings to default values.
 // message you
 #define CHAT_ID "write chat-id" 
 #define configure_time() configTime(3 * 3600, 0, "tr.pool.ntp.org", "3.tr.pool.ntp.org"); /* get UTC time via NTP. Find your local time server from : www.ntppool.org */
+#define DEGREE "C"  // C for Celcius,  F for Fahrenheit.
+#define day_show 0 // Show  or don't show day counter in Telegram: 1 to show, 0 to not show.
 #define DHT_SENSOR_PIN 21     // ESP32 pin GIOP21 connected to DHT22 sensor
 #define DHT_SENSOR_TYPE DHT22
-#define DEGREE "C"  // C for Celcius,  F for Fahrenheit.
 #define check_interval 2500  // Check dht sensor interval (miliseconds)
 
 #include <Preferences.h>
@@ -118,10 +120,15 @@ bool calibrbool_hm = false;
 bool dhthealth = true;
 String chat_id;
 String text = "null";
+String day_count = "0";
+int day_count_int;
+long startingday;
+time_t now;
+
 
 // Handle what happens when you receive new messages
 void handleNewMessages(int numNewMessages) {
-  Serial.println("handleNewMessages");
+  Serial.print("handleNewMessages, number of messages: ");
   Serial.println(String(numNewMessages));
 
   for (int i = 0; i < numNewMessages; i++) {
@@ -347,7 +354,7 @@ void handleNewMessages(int numNewMessages) {
 boolean IsNumeric(String str) {
 
   if (str.length()) {
-    Serial.println(str);
+    
     for (char i = 0; i < str.length(); i++) {
       if (!(isDigit(str.charAt(i)) || str.charAt(i) == '.')) {
         return false;
@@ -360,6 +367,8 @@ boolean IsNumeric(String str) {
 }
 void reset_all()
 {
+  startingday=now;
+  delay(100);
   preferences.begin("bot-memory", false);
   delay(200);
   preferences.clear();
@@ -374,11 +383,16 @@ void reset_all()
 	delay(100);
   preferences.putUInt("intervalt", 10);
   delay(100);
+  preferences.putUInt("startingday", startingday);
+  delay(100);
   preferences.end();
   delay(300);
   Serial.println("Memory cleaned- resetting...");
   bot.sendMessage(chat_id, "Default values saved. Resetting device... \U0001f504", "");
-   text="delete";
+  text="delete";
+  day_count="0";
+  
+ 
   delay(300);
   
   ESP.restart();
@@ -412,18 +426,16 @@ void readdht()  // Function to read sensor values.
     dhthealth = false;
   } else {
     dhthealth = true;
-    Serial.print("Humidity: ");
-    Serial.print(humi);
-    Serial.print("%");
-
-    Serial.print("  |  ");
-
     Serial.print("Temperature: ");
     Serial.print(tempC);
     if (DEGREE == "C")
-    Serial.println("°C  ~  ");
+    Serial.print("°C  ~  ");
     else
-    Serial.println("°F  ~  ");
+    Serial.print("°F  ~  ");
+    Serial.print("  |  ");
+    Serial.print("Humidity: ");
+    Serial.print(humi);
+    Serial.println("%");
     humidity = humi;
     temperature = tempC;
   }
@@ -467,6 +479,10 @@ void setup() {
   calib_humi = preferences.getUInt("calib_humi", 0);
   delay(100);
 
+  startingday = preferences.getUInt("startingday", 0);
+  delay(100);
+
+
   // Connect to Wi-Fi
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
@@ -482,12 +498,16 @@ void setup() {
   preferences.end();
   timecheck();
 }
+
+
 void timecheck()  //Get time, date, day of week 
 {
+  
   timet = " ";
   minutet = " ";
   secondt = " ";
-  time_t now = time(nullptr);
+  now = time(nullptr);
+  
   while (now < 24 * 3600) 
   {
     Serial.print(".");
@@ -496,21 +516,34 @@ void timecheck()  //Get time, date, day of week
   }
   time_t rawtime;
   struct tm* timeinfo;
+
   char buffer[80], buffer2[40], buffer3[40], buffer4[40];
 
   time(&rawtime);
   timeinfo = localtime(&rawtime);
+  
 
   strftime(buffer2, 40, "%A", timeinfo);  //day of week
-  strftime(buffer4, 40, "%S", timeinfo);  //seconds:  00-59
-  strftime(buffer3, 40, "%M", timeinfo);  //minutes:  00-59
+  //strftime(buffer4, 40, "%S", timeinfo);  //seconds:  00-59
+ // strftime(buffer3, 40, "%M", timeinfo);  //minutes:  00-59
   String day_w(buffer2);
-  strftime(buffer, 80, "\U0001f4c6 Date: %e/%m/%G , \U0001f564 Time: %T , Day :", timeinfo);
+  strftime(buffer, 80, "\U0001f4c6 Date: %e/%m/%G   \U0001f564 Time: %T , Day :", timeinfo);
 
-  minutet = buffer3;
-  secondt = buffer4;
+ // minutet = buffer3;
+ // secondt = buffer4;
 
+  //timet = buffer + day_w;
+ if (day_show==1)
+ { 
+    day_count_int = 0;
+  day_count_int = (now- startingday) / 86400L;
+  day_count= String(day_count_int);
+  timet = buffer + day_w +"   \U0001f4c5 Current day(count): "+ day_count;
+ }
+ else
+ {
   timet = buffer + day_w;
+ }
 }
 
 void loop() 
