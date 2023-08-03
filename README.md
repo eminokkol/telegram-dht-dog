@@ -4,7 +4,7 @@ Read dht sensor values through telegram bot from esp-32 device. Enter high and l
 
 This simple device can be used in incubators to follow humidity and temperature via Telegram.
 
-
+Detailed instructables : https://www.instructables.com/Esp-32-Based-Temperature-and-Humidity-Tracing-Via-
 
 ## Code uses:    
 
